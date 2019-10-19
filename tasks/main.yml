@@ -27,6 +27,8 @@
   command: >
     {{ php_executable }} composer-installer.php {% if composer_version %} --version={{ composer_version }}{% endif %}
     chdir=/tmp
+  environment:
+    HOME: /root
   when: not composer_bin.stat.exists
 
 - name: Move Composer into globally-accessible location.
