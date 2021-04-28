@@ -28,7 +28,7 @@
     {{ php_executable }} composer-installer.php {% if composer_version_branch %} {{ composer_version_branch }}{% elif composer_version %} --version={{ composer_version }}{% endif %}
     chdir=/tmp
   environment:
-    HOME: /root
+    HOME: "{{ lookup('env', 'HOME') | default('/root', True) }}"
   when: not composer_bin.stat.exists
 
 - name: Move Composer into globally-accessible location.
@@ -40,6 +40,8 @@
 - name: Update Composer to latest version (if configured).
   command: >
     {{ php_executable }} {{ composer_path }} self-update {{ composer_version_branch }}
+  environment:
+    HOME: "{{ lookup('env', 'HOME') | default('/root', True) }}"
   register: composer_update
   changed_when: "'Updating to version' in composer_update.stdout"
   when: composer_keep_updated | bool
